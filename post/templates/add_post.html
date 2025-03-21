@@ -58,7 +58,7 @@
                 </div>
 
                 <!-- Categoría y Tags -->
-                <div class="col-md-6">
+                <div class="col-12">
                     <label class="form-label">Category</label>
                     <select name="category" class="form-select" required>
                         {% for category in categories %}
@@ -67,9 +67,9 @@
                     </select>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-12">
                     <label class="form-label">Tags</label>
-                    <select name="tags" class="form-select" multiple size="4" required>
+                    <select name="tags" class="form-select" multiple size="6" required>
                         {% for tag in tags %}
                         <option value="{{ tag.id }}">{{ tag.name }}</option>
                         {% endfor %}

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'post.apps.PostConfig',
+    'accounts',
     'ckeditor',
     'ckeditor_uploader',
 ]
@@ -132,3 +133,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CKEDITOR_UPLOAD_PATH = "uploads/"
+
+LOGIN_URL = 'accounts:signin'
+LOGOUT_URL = 'post:post_list'
+LOGIN_REDIRECT_URL = 'post:post_list'

@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% endif %}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<style>
+    /* Estilos móviles */
+    @media (max-width: 768px) {
+        .table td, .table th {
+            padding: 0.75rem 0.5rem;
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+    }
+</style>
+
+<style>
+    .pagination .page-item.active .page-link {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+        
+    @media (max-width: 576px) {
+        .pagination .page-item:not(.active) .page-link {
+            padding: 0.25rem 0.5rem;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mt-5">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-dark">
+                          <tr>
+                            <th scope="col" class="d-none d-md-table-cell">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col" class="d-none d-sm-table-cell">Create At</th>
+                            <th scope="col" style="min-width: 100px;">Options</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {% for category in categories %}
+                          <tr>
+                            <td class="d-none d-md-table-cell">{{ category.id }}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-bold">{{ category.name }}</span>
+                                </div>
+                            </td>
+                            <td class="d-none d-sm-table-cell">
+                                <span class="small">{{ category.create_at|date:'d M Y' }}</span>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editCategoryModal{{ category.id }}" title="Editar">
+                                        <i class="bi bi-pencil-fill"></i>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
+                                        </svg>
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal{{ category.id }}" title="Eliminar">
+                                        <i class="bi bi-trash3-fill"></i>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                          </tr>
+                          
+                          <!-- Modal Delete -->
+                        <div class="modal fade" id="deleteCategoryModal{{ category.id }}" tabindex="-1" aria-labelledby="deleteCategoryModalLabel{{ category.id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                              <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                  <h5 class="modal-title" id="deleteCategoryModalLabel{{ category.id }}">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Delete Category
+                                  </h5>
+                                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                  <p>¿Are you sure to Delete this Category:</p>
+                                  <h6 class="mb-3">"{{ category.name }}"</h6>
+                                  <p class="small text-muted">This action cannot be undone.</p>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                  <form action="{% url 'post:delete_category' category.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">
+                                      <i class="bi bi-trash3-fill me-2"></i>Yes, Delete
+                                    </button>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                        <!-- Modal Edit Category-->
+                        <div class="modal fade" id="editCategoryModal{{ category.id }}" tabindex="-1" aria-labelledby="editCategoryModallabel{{ category.id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-warning text-white">
+                                <h1 class="modal-title fs-5" id="editCategoryModalLabel{{ category.id }}">Edit Category</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{% url 'post:edit_category' category.id %}" method="POST">
+                                        {% csrf_token %}
+                                        <div class="mb-3">
+                                            <label for="id_name" class="form-label">Category Name</label>
+                                            <input type="text" name="name" class="form-control" id="id_name" value="{{ category.name }}">
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-warning" style="color: #fff;">Edit Category</button>
+                                </form>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-center">
+                        <nav aria-label="Paginación">
+                            <ul id="pagination" class="pagination">
+                                <!-- Los botones se generarán aquí -->
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <button type="button" class="btn btn-success mt-4" data-bs-toggle="modal" data-bs-target="#AddCategoryModal">
+                    Add Category
+                </button>
+                <!-- Modal Add Category-->
+                <div class="modal fade" id="AddCategoryModal" tabindex="-1" aria-labelledby="AddCategoryModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-success text-white">
+                        <h1 class="modal-title fs-5" id="AddCategoryModalLabel">Add Category</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{% url 'post:add_category' %}" method="POST">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="id_name" class="form-label">Category Name</label>
+                                    <input type="text" name="name" class="form-control" id="id_name" required>
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Add Category</button>
+                        </form>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Inicializar tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configuración
+        const table = document.querySelector('table');
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        const itemsPerPage = 5; // Cambia este valor según necesites
+        let currentPage = 1;
+        
+        // Función para mostrar las filas
+        function showPage(page) {
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            
+            rows.forEach((row, index) => {
+                row.style.display = (index >= start && index < end) ? '' : 'none';
+            });
+        }
+        
+        // Función para crear botones de paginación
+        function setupPagination() {
+            const pagination = document.getElementById('pagination');
+            const pageCount = Math.ceil(rows.length / itemsPerPage);
+            
+            pagination.innerHTML = '';
+            
+            // Botón Anterior
+            const prevLi = document.createElement('li');
+            prevLi.className = 'page-item';
+            prevLi.innerHTML = `${currentPage === 1 ? '' : ''}`;
+            prevLi.addEventListener('click', () => {
+                if(currentPage > 1) {
+                    currentPage--;
+                    updatePagination();
+                }
+            });
+            pagination.appendChild(prevLi);
+            
+            // Números de página
+            for(let i = 1; i <= pageCount; i++) {
+                const li = document.createElement('li');
+                li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                li.innerHTML = `<button class="page-link">${i}</button>`;
+                li.addEventListener('click', () => {
+                    currentPage = i;
+                    updatePagination();
+                });
+                pagination.appendChild(li);
+            }
+            
+            // Botón Siguiente
+            const nextLi = document.createElement('li');
+            nextLi.className = 'page-item';
+            nextLi.innerHTML = `${currentPage === pageCount ? '' : ''}`;
+            nextLi.addEventListener('click', () => {
+                if(currentPage < pageCount) {
+                    currentPage++;
+                    updatePagination();
+                }
+            });
+            pagination.appendChild(nextLi);
+        }
+        
+        // Actualizar paginación y vista
+        function updatePagination() {
+            showPage(currentPage);
+            setupPagination();
+        }
+        
+        // Inicializar
+        showPage(currentPage);
+        setupPagination();
+        
+    });
+</script>
+
+{% endblock %}

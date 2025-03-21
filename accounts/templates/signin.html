@@ -1,0 +1,176 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% endif %}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="login-form">
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-8 col-lg-5">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white text-center" style="padding: 25px;">
+                        <h3 class="mb-0">Access to Blog</h3>
+                    </div>
+                    
+                    <div class="card-body p-4">
+                        <form action="{% url 'accounts:signin' %}" method="POST" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            
+                            {% if form.errors %}
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    Username or Password incorrect
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endif %}
+    
+                            <!-- Usuario -->
+                            <div class="mb-3">
+                                <label for="id_username" class="form-label">Username</label>
+                                <input 
+                                    type="text" 
+                                    name="username" 
+                                    class="form-control" 
+                                    id="id_username" 
+                                    placeholder="Insert your Username"
+                                    required
+                                >
+                                <div class="invalid-feedback">
+                                    Insert your Username
+                                </div>
+                            </div>
+    
+                            <!-- Contraseña -->
+                            <div class="mb-4">
+                                <label for="id_password" class="form-label">Password</label>
+                                <input 
+                                    type="password" 
+                                    name="password" 
+                                    class="form-control" 
+                                    id="id_password" 
+                                    placeholder="••••••••"
+                                    required
+                                >
+                                <div class="invalid-feedback">
+                                    Insert your Password
+                                </div>
+                            </div>
+    
+                            <!-- Recordar sesión -->
+                            <div class="mb-3 form-check">
+                                <input 
+                                    type="checkbox" 
+                                    class="form-check-input" 
+                                    id="rememberMe"
+                                >
+                                <label class="form-check-label" for="rememberMe">
+                                    Remember Me
+                                </label>
+                            </div>
+    
+                            <!-- Botón de acceso -->
+                            <button type="submit" class="btn btn-primary w-100 mb-3">
+                                <i class="bi bi-box-arrow-in-right me-2"></i> Sign In
+                            </button>
+    
+                            <!-- Enlaces adicionales -->
+                            <div class="row">
+                                <div class="col-6">
+                                    <a href="#" class="text-decoration-none small">
+                                        ¿Forget your Password?
+                                    </a>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <a href="#" class="text-decoration-none small">
+                                        Create Account
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body{
+        background: linear-gradient(to top, #30cfd0 0%, #330867 100%);
+    }
+
+    .login-form{
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card {
+        border-radius: 15px;
+        border: none;
+    }
+
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+
+    .invalid-feedback {
+        display: none;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.875em;
+        color: #dc3545;
+    }
+
+    .was-validated .form-control:invalid ~ .invalid-feedback {
+        display: block;
+    }
+
+    .card {
+        animation: slideIn 0.5s ease-out;
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+</style>
+
+<!-- Incluir Bootstrap Icons si no están ya -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<script>
+    // Validación de formulario
+    (() => {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')
+        
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+{% endblock %}

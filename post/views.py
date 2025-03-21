@@ -1,23 +1,27 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from .models import Post, Comment, Category, Tag
 from django.contrib import messages
-
+from django.contrib.auth.decorators import login_required
 # Create your views here.
+
+# ====================================================================================== # POST
 def post_list(request):
     posts = Post.objects.all()
     context = { 'posts': posts }
     return render(request, 'post_list.html', context)
-
-def admin_post(request):
-    posts = Post.objects.all()
-    context = { 'posts': posts }
-    return render(request, 'admin_post.html', context)
 
 def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug)
     context = { 'post': post }
     return render(request, 'post_detail.html', context)
 
+@login_required
+def admin_post(request):
+    posts = Post.objects.all()
+    context = { 'posts': posts }
+    return render(request, 'admin_post.html', context)
+
+@login_required
 def add_post(request):
     categories = Category.objects.all()
     tags = Tag.objects.all()
@@ -52,6 +56,7 @@ def add_post(request):
     context = { 'categories': categories, 'tags': tags }
     return render(request, 'add_post.html', context)
 
+@login_required
 def edit_post(request, slug):
     post = get_object_or_404(Post, slug=slug)
     categories = Category.objects.all()
@@ -93,8 +98,106 @@ def edit_post(request, slug):
 
     return render(request, 'edit_post.html', context)
 
+@login_required
 def delete_post(request, slug):
     post = get_object_or_404(Post, slug=slug)
     post.delete()
     messages.success(request, 'Post deleted successfully')
     return redirect('post:admin_post')
+
+# ====================================================================================== # END POST
+
+# ====================================================================================== # CATEGORY
+
+@login_required
+def admin_categories(request):
+    categories = Category.objects.all()
+    context = { 'categories': categories }
+    return render(request, 'admin_categories.html', context)
+
+@login_required
+def add_category(request):
+    if request.method == "POST":
+        name = request.POST.get('name')
+        if name:
+            Category.objects.create(name=name)
+            messages.success(request, 'Category created successfully')
+            return redirect('post:admin_categories')
+        else:
+            messages.error(request, "All fields are required")
+            return redirect('post:admin_categories')
+    return render(request, 'admin_categories.html')
+
+@login_required
+def edit_category(request, id):
+    category = get_object_or_404(Category, id=id)
+
+    if request.method == "POST":
+        name = request.POST.get('name')
+
+        if name:
+            category.name = name
+            category.save()
+            messages.success(request, 'Category updated successfully')
+            return redirect('post:admin_categories')
+        else:
+            messages.error(request, "All fields are required")
+            return redirect('post:admin_categories')
+    return render(request, 'admin_categories.html')
+
+@login_required
+def delete_category(request, id):
+    category = get_object_or_404(Category, id=id)
+    category.delete()
+    messages.success(request, 'Category deleted successfully')
+    return redirect('post:admin_categories')
+
+# ====================================================================================== # END CATEGORY
+
+# ====================================================================================== # TAGS
+
+@login_required
+def admin_tags(request):
+    tags = Tag.objects.all()
+    context = { 'tags': tags }
+    return render(request, 'admin_tags.html', context)
+
+@login_required
+def add_tag(request):
+    if request.method == "POST":
+        name = request.POST.get('name')
+        if name:
+            Tag.objects.create(name=name)
+            messages.success(request, 'Tag created successfully')
+            return redirect('post:admin_tags')
+        else:
+            messages.error(request, "All fields are required")
+            return redirect('post:admin_tags')
+    return render(request, 'admin_tags.html')
+
+@login_required
+def edit_tag(request, id):
+    tag = get_object_or_404(Tag, id=id)
+
+    if request.method == "POST":
+        name = request.POST.get('name')
+
+        if name:
+            tag.name = name
+            tag.save()
+            messages.success(request, 'Tag updated successfully')
+            return redirect('post:admin_tags')
+        else:
+            messages.error(request, "All fields are required")
+            return redirect('post:admin_tags')
+    return render(request, 'admin_tags.html')
+
+@login_required
+def delete_tag(request, id):
+    tag = get_object_or_404(Tag, id=id)
+    tag.delete()
+    messages.success(request, 'Tag deleted successfully')
+    return redirect('post:admin_tags')
+
+# ====================================================================================== # END TAGS
+
