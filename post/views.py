@@ -1,12 +1,13 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from .models import Post, Comment, Category, Tag
+from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 # ====================================================================================== # POST
 def post_list(request):
-    posts = Post.objects.all()
+    posts = Post.objects.all().order_by('-create_at')
     context = { 'posts': posts }
     return render(request, 'post_list.html', context)
 
@@ -200,4 +201,73 @@ def delete_tag(request, id):
     return redirect('post:admin_tags')
 
 # ====================================================================================== # END TAGS
+
+# ====================================================================================== # USERS
+
+def admin_users(request):
+    users = User.objects.all()
+    context = { 'users': users }
+    return render(request, 'admin_users.html', context)
+
+def add_user(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+
+        if password1 == password2:
+            if User.objects.filter(username=username).exists():
+                messages.error(request, "Username already exists")
+                return redirect('post:admin_users')
+            else:
+                if User.objects.filter(email=email).exists():
+                    messages.error(request, "Email already exists")
+                    return redirect('post:admin_users')
+                else:
+                    User.objects.create_user(
+                        username=username,
+                        first_name=first_name,
+                        last_name=last_name,
+                        email=email,
+                        password=password1
+                    )
+                    messages.success(request, 'User created successfully')
+                    return redirect('post:admin_users')
+        else:
+            messages.error(request, "Passwords do not match")
+            return redirect('post:admin_users')
+    return render(request, 'admin_users.html')
+
+def edit_user(request, id):
+    user = get_object_or_404(User, id=id)
+    if request.method == "POST":
+        username = request.POST.get('username')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+
+        if username and first_name and last_name and email:
+            user.username = username
+            user.first_name = first_name
+            user.last_name = last_name
+            user.email = email
+            user.save()
+            messages.success(request, 'User updated successfully')
+            return redirect('post:admin_users')
+        else:
+            messages.error(request, "All fields are required")
+            return redirect('post:admin_users')
+    return render(request, 'admin_users.html')
+
+
+def delete_user(request, id):
+    user = get_object_or_404(User, id=id)
+    user.delete()
+    messages.success(request, 'User deleted successfully')
+    return redirect('post:admin_users')
+
+# ====================================================================================== # END USERS
 

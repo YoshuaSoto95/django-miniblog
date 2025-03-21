@@ -25,4 +25,10 @@ urlpatterns = [
     path('add_tag/', views.add_tag, name='add_tag'), # add tag
     path('edit_tag/<int:id>', views.edit_tag, name='edit_tag'), # edit tag
     path('delete_tag/<int:id>', views.delete_tag, name='delete_tag'), # delete tag
+
+    # Users
+    path('admin_users/', views.admin_users, name="admin_users"), # table with all users
+    path('add_user/', views.add_user, name="add_user"), # add user
+    path('edit_user/<int:id>', views.edit_user, name="edit_user"), # edit user
+    path('delete_user/<int:id>', views.delete_user, name="delete_user"), # delete user
 ]
